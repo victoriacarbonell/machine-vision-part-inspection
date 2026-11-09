@@ -1,0 +1,74 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>warnings</Nullable>
+    <Platforms>x86;x64</Platforms>
+    <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <Target Name="ValidateCommandLine" BeforeTargets="ResolveAssemblyReferences">
+    <Error Text=" The 'Platform' property must be set on the command line." Condition="'$(Platform)' == ''" />
+    <Error Text=" The 'Platform' property must not be set to Any/AnyCPU." Condition="$(Platform.Contains('Any'))" />
+  </Target>
+
+  <ItemGroup>
+    <PackageReference Include="Emgu.CV" Version="4.5.5.4823" />
+    <PackageReference Include="Emgu.CV.Bitmap" Version="4.5.5.4823" />
+    <PackageReference Include="Emgu.CV.runtime.windows" Version="4.5.5.4823" />
+    <PackageReference Include="Emgu.CV.UI" Version="4.5.5.4823" />
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ids_peak_dotnet">
+      <HintPath Condition="'$(Platform)'=='x86'">$(IDS_PEAK_GENERIC_SDK_PATH)/api\binding\dotnet\x86_32\ids_peak_dotnet.dll</HintPath>
+      <HintPath Condition="'$(Platform)'=='x64'">$(IDS_PEAK_GENERIC_SDK_PATH)/api\binding\dotnet\x86_64\ids_peak_dotnet.dll</HintPath>
+    </Reference>
+    <Reference Include="ids_peak_ipl_extension_dotnet">
+      <HintPath Condition="'$(Platform)'=='x86'">$(IDS_PEAK_GENERIC_SDK_PATH)/api\binding\dotnet\x86_32\ids_peak_ipl_extension_dotnet.dll</HintPath>
+      <HintPath Condition="'$(Platform)'=='x64'">$(IDS_PEAK_GENERIC_SDK_PATH)/api\binding\dotnet\x86_64\ids_peak_ipl_extension_dotnet.dll</HintPath>
+    </Reference>
+    <Reference Include="ids_peak_ipl_dotnet">
+      <HintPath Condition="'$(Platform)'=='x86'">$(IDS_PEAK_GENERIC_SDK_PATH)/ipl\binding\dotnet\x86_32\ids_peak_ipl_dotnet.dll</HintPath>
+      <HintPath Condition="'$(Platform)'=='x64'">$(IDS_PEAK_GENERIC_SDK_PATH)/ipl\binding\dotnet\x86_64\ids_peak_ipl_dotnet.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <Target Name="CopyDependencies" BeforeTargets="Build">
+    <ItemGroup Condition="'$(Platform)'=='x86'">
+      <Dependencies Include="$(IDS_PEAK_GENERIC_SDK_PATH)/api\binding\dotnet\x86_32\ids_peak_dotnet_interface.dll" />
+      <Dependencies Include="$(IDS_PEAK_GENERIC_SDK_PATH)/api\binding\dotnet\x86_32\ids_peak_ipl_extension_dotnet_interface.dll" />
+      <Dependencies Include="$(IDS_PEAK_GENERIC_SDK_PATH)/api\lib\x86_32\*.dll" />
+      <Dependencies Include="$(IDS_PEAK_GENERIC_SDK_PATH)/ipl\binding\dotnet\x86_32\ids_peak_ipl_dotnet_interface.dll" />
+      <Dependencies Include="$(IDS_PEAK_GENERIC_SDK_PATH)/ipl\lib\x86_32\*.dll" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(Platform)'=='x64'">
+      <Dependencies Include="$(IDS_PEAK_GENERIC_SDK_PATH)/api\binding\dotnet\x86_64\ids_peak_dotnet_interface.dll" />
+      <Dependencies Include="$(IDS_PEAK_GENERIC_SDK_PATH)/api\binding\dotnet\x86_64\ids_peak_ipl_extension_dotnet_interface.dll" />
+      <Dependencies Include="$(IDS_PEAK_GENERIC_SDK_PATH)/api\lib\x86_64\*.dll" />
+      <Dependencies Include="$(IDS_PEAK_GENERIC_SDK_PATH)/ipl\binding\dotnet\x86_64\ids_peak_ipl_dotnet_interface.dll" />
+      <Dependencies Include="$(IDS_PEAK_GENERIC_SDK_PATH)/ipl\lib\x86_64\*.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(Dependencies)" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>
